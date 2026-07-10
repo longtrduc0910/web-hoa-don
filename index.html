@@ -2,46 +2,54 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- KHÓA ZOOM TRÊN ĐIỆN THOẠI ĐỂ CHỐNG LỖI BÀN PHÍM -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hóa Đơn - TURING PHYSICS</title>
+    
+    <!-- Tích hợp Font Lora hỗ trợ chuẩn Tiếng Việt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    
     <!-- Thư viện chụp ảnh hóa đơn -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* === FONT CHỮ BOOK ANTIQUA === */
+        /* === DÙNG FONT LORA SIÊU NÉT CHO TIẾNG VIỆT === */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            font-family: 'Book Antiqua', Palatino, 'Palatino Linotype', serif; 
+            font-family: 'Lora', serif; 
             padding: 15px; 
             background-color: #f1f5f9; 
             color: #1e293b; 
         }
         
         .container { max-width: 750px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; font-weight: bold; letter-spacing: 0.5px; font-size: 22px; }
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; font-weight: 700; letter-spacing: 0.5px; font-size: 22px; }
         
         /* === KHU VỰC NHẬP LIỆU === */
         .config-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 15px; margin-bottom: 20px; }
-        .config-box label { font-weight: bold; font-size: 14px; color: #334155; display: block; margin-bottom: 8px; }
-        .input-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; margin-bottom: 12px; }
+        .config-box label { font-weight: 700; font-size: 15px; color: #334155; display: block; margin-bottom: 8px; }
+        .input-row { display: grid; grid-template-columns: 90px 1fr; gap: 10px; margin-bottom: 12px; }
         .input-row.two-cols { grid-template-columns: 1fr 1fr; }
         
+        /* Chỉnh font size 16px để iOS không tự zoom khi gõ phím */
         .input-row select, .input-row input, .select-items, .input-group input { 
-            width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #cbd5e1; 
-            font-size: 15px; outline: none; font-family: 'Book Antiqua', Palatino, serif; transition: 0.2s; 
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; 
+            font-size: 16px; outline: none; font-family: 'Lora', serif; transition: 0.2s; 
         }
         .input-row input:focus, .input-row select:focus, .select-items:focus, .input-group input:focus { 
             border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.15); 
         }
         
         .product-row { background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .product-row h4 { margin-bottom: 10px; color: #1a73e8; font-size: 15px; font-weight: bold; }
+        .product-row h4 { margin-bottom: 10px; color: #1a73e8; font-size: 16px; font-weight: 700; }
         .input-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
-        .row-subtotal { font-weight: bold; color: #dc2626; text-align: right; font-size: 15px; }
+        .row-subtotal { font-weight: 700; color: #dc2626; text-align: right; font-size: 16px; }
         
         button { 
-            width: 100%; padding: 14px; font-size: 16px; border-radius: 12px; border: none; 
-            cursor: pointer; font-weight: bold; transition: all 0.2s; margin-top: 10px; 
-            font-family: 'Book Antiqua', Palatino, serif; 
+            width: 100%; padding: 15px; font-size: 17px; border-radius: 12px; border: none; 
+            cursor: pointer; font-weight: 700; transition: all 0.2s; margin-top: 10px; 
+            font-family: 'Lora', serif; 
         }
         .btn-preview { background-color: #1a73e8; color: white; }
         .btn-preview:hover { background-color: #1557b0; }
@@ -49,21 +57,18 @@
         .btn-copy:hover { background-color: #1e293b; }
 
         /* ================= KHU VỰC PHÔI HÓA ĐƠN ================= */
-        /* Bao bọc hóa đơn để vuốt ngang trên điện thoại mà không bị bóp méo */
         .invoice-scroll-wrapper {
             width: 100%;
-            overflow-x: auto; /* Cho phép vuốt ngang */
+            overflow-x: auto; 
             margin-top: 30px;
             padding-bottom: 15px;
             display: none; 
         }
 
         #invoice-box {
-            /* KHÓA CỨNG KÍCH THƯỚC: 520px (Nhỏ nhắn, xinh xắn) */
             width: 520px;
             min-width: 520px;
             margin: 0 auto;
-            
             background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
             padding: 35px 30px;
             border: 2px solid #7dd3fc;
@@ -73,11 +78,11 @@
             box-shadow: inset 0 0 15px rgba(255,255,255,0.5);
         }
         
-        /* 1. Header */
+        /* 1. Header: Avatar bên trái & Thương hiệu ở CHÍNH GIỮA, ĐÓNG KHUNG, PHÁT SÁNG */
         .inv-header { 
             display: flex; 
             align-items: center; 
-            justify-content: center;
+            justify-content: center; /* Ép vào chính giữa */
             margin-bottom: 25px; 
             position: relative; 
             min-height: 80px;
@@ -91,33 +96,35 @@
         .inv-brand { 
             background: linear-gradient(135deg, #0284c7, #0369a1); 
             color: #ffffff; 
-            font-size: 24px; /* Giảm cỡ chữ để gọn hơn */
-            font-weight: bold; 
-            padding: 10px 25px 10px 45px; /* Đẩy chữ sang phải để né avatar */
-            border-radius: 40px; 
+            font-size: 24px; 
+            font-weight: 700; 
+            padding: 12px 30px; 
+            border-radius: 12px; /* ĐÓNG KHUNG VUÔNG VỨC */
             display: inline-block;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
+            /* HIỆU ỨNG PHÁT SÁNG SANG TRỌNG */
+            text-shadow: 0 0 5px rgba(255,255,255,0.8); 
+            box-shadow: 0 0 18px rgba(2, 132, 199, 0.6), inset 0 0 8px rgba(255,255,255,0.2);
             border: 2px solid #bae6fd;
-            margin-left: 20px;
+            margin: 0 auto;
         }
 
         /* 2. Tiêu đề, Thời gian, Khách hàng */
         .inv-title-section { text-align: center; margin-bottom: 20px; border-bottom: 2px dashed #7dd3fc; padding-bottom: 15px; }
-        .inv-main-title { font-size: 19px; font-weight: bold; color: #0284c7; margin-bottom: 5px; text-shadow: 1px 1px 0px #fff; }
-        .inv-datetime { font-size: 14px; color: #0369a1; font-weight: bold; margin-bottom: 12px; }
+        .inv-main-title { font-size: 20px; font-weight: 700; color: #0284c7; margin-bottom: 5px; text-shadow: 1px 1px 0px #fff; }
+        .inv-datetime { font-size: 15px; color: #0369a1; font-weight: 700; margin-bottom: 12px; }
         .inv-customer { 
-            font-size: 16px; color: #0f172a; background: rgba(255,255,255,0.85); 
-            display: inline-block; padding: 12px 20px; border-radius: 12px; 
+            font-size: 17px; color: #0f172a; background: rgba(255,255,255,0.9); 
+            display: inline-block; padding: 15px 20px; border-radius: 12px; 
             border-left: 5px solid #0284c7; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             max-width: 100%;
         }
-        .inv-customer span { font-weight: bold; color: #0284c7; }
+        /* ÉP MÀU ĐEN VÀ IN ĐẬM ĐỂ CHỮ NÉT CĂNG */
+        .inv-customer span { font-weight: 700; color: #000000; font-size: 19px; }
         
-        .inv-contact { font-size: 15px; margin-top: 5px; }
-        .inv-contact b { color: #0284c7; font-weight: bold; }
-        .contact-val { color: #000000; font-weight: 900; } 
+        .inv-contact { font-size: 16px; margin-top: 8px; }
+        .inv-contact b { color: #0284c7; font-weight: 700; }
+        .contact-val { color: #000000; font-weight: 700; font-size: 17px; } 
 
         /* 3. Bảng dữ liệu */
         .table-wrapper {
@@ -128,31 +135,31 @@
             margin-bottom: 20px;
             box-shadow: 0 3px 8px rgba(0,0,0,0.03);
         }
-        .inv-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .inv-table { width: 100%; border-collapse: collapse; font-size: 15px; }
         .inv-table th { 
             background-color: #0284c7; 
             color: #ffffff !important; 
-            padding: 10px 6px; 
-            font-size: 14px; 
-            font-weight: bold; 
+            padding: 12px 6px; 
+            font-size: 15px; 
+            font-weight: 700; 
             text-align: center !important; 
             border-bottom: 2px solid #0369a1;
         }
-        .inv-table td { padding: 12px 6px; border-bottom: 1px dashed #bae6fd; color: #1e293b; }
+        .inv-table td { padding: 14px 6px; border-bottom: 1px dashed #bae6fd; color: #1e293b; font-weight: 600; }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-left { text-align: left; padding-left: 10px; } 
         
-        .col-total-val { font-weight: bold; color: #dc2626; } 
+        .col-total-val { font-weight: 700; color: #dc2626; } 
 
         /* 4. Tổng thanh toán */
         .inv-total-wrapper { text-align: right; margin-bottom: 25px; padding-top: 5px; }
-        .inv-total-text { font-size: 16px; font-weight: bold; color: #0369a1; display: inline-block; margin-right: 12px; text-transform: uppercase; }
+        .inv-total-text { font-size: 17px; font-weight: 700; color: #0369a1; display: inline-block; margin-right: 12px; text-transform: uppercase; }
         .inv-total-box {
             display: inline-block;
-            font-size: 22px;
-            font-weight: bold;
+            font-size: 24px;
+            font-weight: 700;
             color: #ef4444; 
             padding: 8px 20px;
             border: 2px solid #ef4444; 
@@ -187,29 +194,30 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.08);
             background: white; padding: 4px;
         }
-        .qr-label { font-size: 12px; font-weight: bold; color: #0369a1; margin-top: 6px; text-transform: uppercase; }
+        .qr-label { font-size: 13px; font-weight: 700; color: #0369a1; margin-top: 6px; text-transform: uppercase; }
 
-        .bank-info { text-align: left; font-size: 15px; color: #0f172a; line-height: 1.5; }
+        .bank-info { text-align: left; font-size: 16px; color: #000; line-height: 1.5; font-weight: 600; }
         .bank-info strong { color: #0284c7; display: inline-block; width: 95px; }
-        .bank-info span { font-weight: bold; font-size: 16px; }
+        .bank-info span { font-weight: 700; font-size: 17px; }
 
         .thanks-section { text-align: center; width: 100%; margin-top: 5px; }
-        .thanks-text { font-size: 18px; font-weight: bold; color: #0284c7; margin-bottom: 6px; text-shadow: 1px 1px 0px #fff;}
-        .wish-text { font-size: 16px; font-style: italic; color: #0369a1; margin-bottom: 10px; }
+        .thanks-text { font-size: 19px; font-weight: 700; color: #0284c7; margin-bottom: 6px; text-shadow: 1px 1px 0px #fff;}
+        .wish-text { font-size: 17px; font-style: italic; color: #0369a1; margin-bottom: 10px; font-weight: 600; }
 
         .support-note {
             width: 100%;
             margin-top: 10px;
             padding-top: 12px;
             border-top: 1px solid #bae6fd;
-            font-size: 15px;
-            color: #334155;
+            font-size: 16px;
+            color: #1e293b;
             text-align: center;
             font-style: italic;
+            font-weight: 600;
         }
         .support-note strong {
             color: #0068ff; 
-            font-weight: bold;
+            font-weight: 700;
             font-style: normal; 
         }
 
@@ -307,7 +315,7 @@
                     <div class="bank-info">
                         <div><strong>Ngân hàng:</strong> <span>MB Bank</span></div>
                         <div><strong>Tên chủ TK:</strong> <span>TRẦN GIA BẢO</span></div>
-                        <div><strong>STK:</strong> <span style="color: #dc2626; font-size: 18px;">0338844985</span></div>
+                        <div><strong>STK:</strong> <span style="color: #dc2626; font-size: 19px;">0338844985</span></div>
                     </div>
                 </div>
                 
@@ -420,7 +428,6 @@
         document.getElementById('invDateTime').innerText = getFormattedDateTime();
         document.getElementById('invGrandTotal').innerText = grandTotal.toLocaleString('vi-VN') + " đ";
 
-        // Hiện vùng chứa cuộn và hóa đơn
         document.getElementById('invoiceScroll').style.display = 'block';
         document.getElementById('copyBtn').style.display = 'block';
         
@@ -428,7 +435,6 @@
         btn.innerText = "📋 Copy Ảnh Hóa Đơn Này";
         btn.style.backgroundColor = "#0f172a";
 
-        // Cuộn màn hình xuống chỗ hóa đơn
         document.getElementById('invoiceScroll').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -443,7 +449,6 @@
             useCORS: true, 
             scale: 3, 
             backgroundColor: null,
-            // Thêm các cài đặt để chụp chuẩn trên di động
             windowWidth: 520, 
             width: 520
         }).then(canvas => {
@@ -454,10 +459,10 @@
                         btn.innerText = "✅ Đã Copy Hóa Đơn !";
                         btn.style.backgroundColor = "#16a34a"; 
                         btn.disabled = false;
-                        setTimeout(() => { alert("Ảnh hóa đơn đã được lưu vào bộ nhớ tạm. Bạn có thể nhấn Ctrl+V (hoặc Dán) vào Zalo/Facebook ngay bây giờ!"); }, 100);
+                        setTimeout(() => { alert("Ảnh hóa đơn đã được lưu vào bộ nhớ tạm. Bạn có thể dán (Paste) vào Zalo/Facebook ngay!"); }, 100);
                     }).catch(function(err) {
                         console.error(err);
-                        alert("Không thể copy tự động. Bạn dùng tạm tính năng: Nhấn giữ vào hóa đơn -> Chọn 'Sao chép hình ảnh' hoặc 'Lưu hình ảnh' nhé!");
+                        alert("Không thể copy tự động. Bạn dùng tạm tính năng: Nhấn giữ vào hóa đơn -> Chọn 'Sao chép hình ảnh' nhé!");
                         btn.innerText = "📋 Copy Ảnh Hóa Đơn Này";
                         btn.style.backgroundColor = "#0f172a";
                         btn.disabled = false;
