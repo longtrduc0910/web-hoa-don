@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Hóa Đơn Bán Hàng</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #e9ecef; }
+        .container { max-width: 450px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        select, button { width: 100%; padding: 12px; margin: 10px 0; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #218838; }
+        #downloadBtn { background-color: #007bff; display: none; }
+        #downloadBtn:hover { background-color: #0056b3; }
+        
+        /* Giao diện tờ hóa đơn */
+        #invoice-box {
+            background: white;
+            padding: 25px;
+            border: 2px dashed #999;
+            margin-top: 20px;
+            text-align: center;
+            display: none; /* Ẩn đi lúc mới vào web */
+        }
+        .invoice-header { font-size: 22px; font-weight: bold; margin-bottom: 10px; color: #333; text-transform: uppercase; }
+        .invoice-details { text-align: left; margin-bottom: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; font-size: 16px; }
+        .qr-code { width: 180px; height: 180px; object-fit: contain; border: 1px solid #ddd; padding: 5px; margin-top: 10px; }
+        .footer-text { font-size: 13px; color: #666; margin-top: 15px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ỨNG DỤNG TẠO HÓA ĐƠN</h2>
+    
+    <label for="productSelect"><b>Chọn sản phẩm khách mua:</b></label>
+    <select id="productSelect">
+        <option value="0">-- Vui lòng chọn sản phẩm --</option>
+        <option value="150000" data-name="Áo phông nam cổ tròn">Áo phông nam cổ tròn - 150.000đ</option>
+        <option value="350000" data-name="Quần Jeans ống rộng">Quần Jeans ống rộng - 350.000đ</option>
+        <option value="550000" data-name="Giày thể thao Sneaker">Giày thể thao Sneaker - 550.000đ</option>
+    </select>
+
+    <button onclick="generateInvoice()">Xem trước Hóa Đơn</button>
+
+    <div id="invoice-box">
+        <div class="invoice-header">SHOP CỦA TÔI</div>
+        <div class="invoice-details">
+            <p><strong>Tên mặt hàng:</strong> <span id="outProductName">...</span></p>
+            <p><strong>Số tiền cần thanh toán:</strong> <span id="outProductPrice" style="color: red; font-weight: bold;">0</span> VNĐ</p>
+        </div>
+        <p style="font-weight: bold; margin-bottom: 5px;">Quét mã QR để thanh toán:</p>
+        
+        <img src="ma-qr-cua-toi.jpg" alt="Mã QR Thanh Toán" class="qr-code" onerror="this.src='https://via.placeholder.com/180?text=Chua+co+anh+QR'">
+        
+        <p class="footer-text">Cảm ơn quý khách đã mua hàng!</p>
+    </div>
+
+    <button id="downloadBtn" onclick="downloadInvoice()">⬇️ Tải Ảnh Hóa Đơn Mới Tạo</button>
+</div>
+
+<script>
+    // Hàm hiển thị hóa đơn khi chọn sản phẩm
+    function generateInvoice() {
+        const select = document.getElementById('productSelect');
+        const selectedOption = select.options[select.selectedIndex];
+        
+        if (select.value === "0") {
+            alert("Bạn ơi, hãy chọn một sản phẩm trước nhé!");
+            return;
+        }
+
+        // Lấy thông tin tên và giá từ tùy chọn đã chọn
+        const productName = selectedOption.getAttribute('data-name');
+        const productPrice = Number(select.value).toLocaleString('vi-VN');
+
+        // Gắn dữ liệu vào hóa đơn
+        document.getElementById('outProductName').innerText = productName;
+        document.getElementById('outProductPrice').innerText = productPrice;
+
+        // Hiển thị hóa đơn và nút tải về
+        document.getElementById('invoice-box').style.display = 'block';
+        document.getElementById('downloadBtn').style.display = 'block';
+    }
+
+    // Hàm chuyển HTML thành Canvas và tải về dạng ảnh
+    function downloadInvoice() {
+        const invoice = document.getElementById('invoice-box');
+        
+        // Ẩn nút tải ảnh đi một chút để tránh tình trạng nút bấm load liên tục
+        const btn = document.getElementById('downloadBtn');
+        btn.innerText = "⏳ Đang tạo ảnh...";
+        
+        html2canvas(invoice, {
+            useCORS: true, // Hỗ trợ tải ảnh QR mượt hơn
+            scale: 2 // Tăng độ nét cho ảnh tải về
+        }).then(canvas => {
+            // Tạo một thẻ link <a> ẩn để tải ảnh
+            const link = document.createElement('a');
+            link.download = 'Hoa-Don-Thanh-Toan.png'; // Tên file ảnh khi tải về máy
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            // Đặt lại chữ cho nút
+            btn.innerText = "⬇️ Tải Ảnh Hóa Đơn Mới Tạo";
+        });
+    }
+</script>
+
+</body>
+</html>
