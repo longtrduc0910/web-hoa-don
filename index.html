@@ -6,7 +6,7 @@
     <title>Hóa Đơn - TURING PHYSICS</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* === ĐỔI FONT CHỮ SANG BOOK ANTIQUA === */
+        /* === FONT CHỮ BOOK ANTIQUA === */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             font-family: 'Book Antiqua', Palatino, 'Palatino Linotype', serif; 
@@ -24,7 +24,6 @@
         .input-row { display: grid; grid-template-columns: 100px 1fr; gap: 15px; margin-bottom: 15px; }
         .input-row.two-cols { grid-template-columns: 1fr 1fr; }
         
-        /* Chỉnh font và bo tròn cho các ô nhập liệu */
         .input-row select, .input-row input, .select-items, .input-group input { 
             width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #cbd5e1; 
             font-size: 16px; outline: none; font-family: 'Book Antiqua', Palatino, serif; transition: 0.2s; 
@@ -38,7 +37,6 @@
         .input-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
         .row-subtotal { font-weight: bold; color: #dc2626; text-align: right; font-size: 16px; }
         
-        /* Nút bấm bo tròn */
         button { 
             width: 100%; padding: 15px; font-size: 17px; border-radius: 15px; border: none; 
             cursor: pointer; font-weight: bold; transition: all 0.2s; margin-top: 10px; 
@@ -51,11 +49,10 @@
 
         /* ================= KHU VỰC PHÔI HÓA ĐƠN ================= */
         #invoice-box {
-            /* Nền màu xanh da trời gradient cực đẹp */
             background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
             padding: 45px 40px;
             border: 2px solid #7dd3fc;
-            border-radius: 25px; /* Bo tròn góc mạnh */
+            border-radius: 25px; 
             margin-top: 35px;
             display: none; 
             color: #0f172a;
@@ -63,7 +60,7 @@
             box-shadow: inset 0 0 20px rgba(255,255,255,0.5);
         }
         
-        /* 1. Header: Avatar & Tên thương hiệu phát sáng */
+        /* 1. Header: Avatar & Tên thương hiệu SẮC NÉT */
         .inv-header { display: flex; align-items: center; margin-bottom: 30px; position: relative; }
         .inv-avatar { 
             width: 90px; height: 90px; border-radius: 50%; object-fit: cover;
@@ -72,9 +69,8 @@
         }
         .inv-brand-wrapper { width: 100%; text-align: center; }
         
-        /* Dòng chữ TURING PHYSICS phát sáng (Sáng sáng thêm tí) */
         .inv-brand { 
-            background: linear-gradient(135deg, #38bdf8, #0284c7); 
+            background: linear-gradient(135deg, #0284c7, #0369a1); 
             color: #ffffff; 
             font-size: 28px; 
             font-weight: bold; 
@@ -82,10 +78,10 @@
             border-radius: 50px; 
             display: inline-block;
             letter-spacing: 1px;
-            /* Hiệu ứng phát sáng Text & Box */
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            /* Đã sửa lại bóng chữ: Giảm nhòe, tăng độ tương phản để chữ CỰC RÕ */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 15px rgba(2, 132, 199, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         /* 2. Tiêu đề, Thời gian, Khách hàng */
@@ -93,41 +89,44 @@
         .inv-main-title { font-size: 22px; font-weight: bold; color: #0284c7; margin-bottom: 8px; text-shadow: 1px 1px 0px #fff; }
         .inv-datetime { font-size: 16px; color: #0369a1; font-weight: bold; margin-bottom: 15px; }
         .inv-customer { 
-            font-size: 18px; color: #0f172a; background: rgba(255,255,255,0.7); 
-            display: inline-block; padding: 12px 25px; border-radius: 15px; 
+            font-size: 18px; color: #0f172a; background: rgba(255,255,255,0.85); /* Nền sáng hơn */
+            display: inline-block; padding: 15px 25px; border-radius: 15px; 
             border-left: 5px solid #0284c7; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .inv-customer span { font-weight: bold; color: #0284c7; }
-        .inv-contact { font-size: 16px; color: #334155; margin-top: 6px; }
+        /* Đã chỉnh SĐT và Gmail cho RÕ NÉT, MÀU ĐẬM */
+        .inv-contact { font-size: 16px; color: #000000; margin-top: 8px; font-weight: bold; }
+        .inv-contact b { color: #0284c7; }
 
-        /* 3. Bảng dữ liệu (Đóng khung và bo tròn) */
+        /* 3. Bảng dữ liệu */
         .table-wrapper {
             background: #ffffff;
-            border-radius: 15px; /* Bo tròn các cạnh của bảng */
-            overflow: hidden;    /* Ẩn các chi tiết tràn ra ngoài để giữ góc bo */
+            border-radius: 15px; 
+            overflow: hidden;    
             border: 2px solid #38bdf8;
             margin-bottom: 25px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
         .inv-table { width: 100%; border-collapse: collapse; font-size: 16px; }
-        /* Tùy chỉnh màu chữ Trắng, căn Giữa cho tiêu đề Bảng */
         .inv-table th { 
             background-color: #0284c7; 
             color: #ffffff !important; 
             padding: 14px 10px; 
             font-size: 16px; 
             font-weight: bold; 
-            text-align: center !important; /* Đảm bảo căn giữa */
+            text-align: center !important; 
             border-bottom: 2px solid #0369a1;
         }
         .inv-table td { padding: 15px 10px; border-bottom: 1px dashed #bae6fd; color: #1e293b; }
+        
         .text-center { text-align: center; }
         .text-right { text-align: right; }
+        .text-left { text-align: left; padding-left: 15px; } /* Căn lề trái cho Tên tài liệu */
         
-        .col-total-val { font-weight: bold; color: #dc2626; } /* Màu đỏ cho cột thành tiền ở dưới Body */
+        .col-total-val { font-weight: bold; color: #dc2626; } 
 
         /* 4. Tổng thanh toán đóng khung bo tròn */
-        .inv-total-wrapper { text-align: right; margin-bottom: 35px; padding-top: 10px; }
+        .inv-total-wrapper { text-align: right; margin-bottom: 30px; padding-top: 10px; }
         .inv-total-text { font-size: 18px; font-weight: bold; color: #0369a1; display: inline-block; margin-right: 15px; text-transform: uppercase; }
         .inv-total-box {
             display: inline-block;
@@ -136,25 +135,43 @@
             color: #ef4444; 
             padding: 10px 25px;
             border: 3px solid #ef4444; 
-            border-radius: 20px; /* Bo tròn khung tổng tiền */
+            border-radius: 20px; 
             background-color: #ffffff;
             min-width: 200px;
             text-align: center;
             box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
         }
 
-        /* 5. Mã QR & Lời chúc */
-        .inv-footer { display: flex; flex-direction: column; align-items: center; }
-        .qr-section { margin-bottom: 15px; text-align: center; }
+        /* 5. Mã QR & Thông tin Ngân hàng thiết kế nằm ngang */
+        .inv-footer { display: flex; flex-direction: column; align-items: center; border-top: 2px dashed #7dd3fc; padding-top: 25px; }
+        
+        .payment-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 2px solid #bae6fd;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .qr-box-inner { text-align: center; }
         .qr-img { 
-            width: 170px; height: 170px; object-fit: contain; 
-            border-radius: 15px; /* Bo tròn góc ảnh QR */
+            width: 150px; height: 150px; object-fit: contain; 
+            border-radius: 15px; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             background: white; padding: 5px;
         }
-        .qr-label { font-size: 16px; font-weight: bold; color: #0369a1; margin-top: 8px; text-transform: uppercase; text-shadow: 1px 1px 0px #fff;}
+        .qr-label { font-size: 14px; font-weight: bold; color: #0369a1; margin-top: 8px; text-transform: uppercase; }
 
-        .thanks-section { text-align: center; width: 100%; margin-top: 15px; }
+        .bank-info { text-align: left; font-size: 17px; color: #0f172a; line-height: 1.6; }
+        .bank-info strong { color: #0284c7; display: inline-block; width: 105px; }
+        .bank-info span { font-weight: bold; font-size: 18px; }
+
+        .thanks-section { text-align: center; width: 100%; margin-top: 10px; }
         .thanks-text { font-size: 20px; font-weight: bold; color: #0284c7; margin-bottom: 8px; text-shadow: 1px 1px 0px #fff;}
         .wish-text { font-size: 18px; font-style: italic; color: #0369a1; }
 
@@ -238,9 +255,17 @@
         </div>
 
         <div class="inv-footer">
-            <div class="qr-section">
-                <img src="ma-qr-cua-toi.jpg" alt="Mã QR" class="qr-img" onerror="this.src='https://via.placeholder.com/170?text=QR+Code'">
-                <div class="qr-label">Quét mã thanh toán</div>
+            
+            <div class="payment-section">
+                <div class="qr-box-inner">
+                    <img src="ma-qr-cua-toi.jpg" alt="Mã QR" class="qr-img" onerror="this.src='https://via.placeholder.com/150?text=QR+Code'">
+                    <div class="qr-label">Quét mã thanh toán</div>
+                </div>
+                <div class="bank-info">
+                    <div><strong>Ngân hàng:</strong> <span>MB Bank</span></div>
+                    <div><strong>Tên chủ TK:</strong> <span>TRẦN GIA BẢO</span></div>
+                    <div><strong>STK:</strong> <span style="color: #dc2626; font-size: 20px;">0338844985</span></div>
+                </div>
             </div>
             
             <div class="thanks-section">
@@ -312,9 +337,10 @@
             const subtotal = qty * price;
             grandTotal += subtotal;
 
+            // Đã chỉnh Tên tài liệu căn lề trái (text-left)
             tbody.innerHTML += `
                 <tr>
-                    <td class="text-center">${name}</td>
+                    <td class="text-left">${name}</td>
                     <td class="text-center">${qty}</td>
                     <td class="text-center">${price.toLocaleString('vi-VN')} đ</td>
                     <td class="text-center col-total-val">${subtotal.toLocaleString('vi-VN')} đ</td>
@@ -364,7 +390,7 @@
         html2canvas(invoice, {
             useCORS: true, 
             scale: 3, 
-            backgroundColor: null // Cho phép giữ nguyên nền gradient xanh da trời
+            backgroundColor: null 
         }).then(canvas => {
             canvas.toBlob(function(blob) {
                 try {
