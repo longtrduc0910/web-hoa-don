@@ -448,9 +448,8 @@
                 const item = document.createElement('div');
                 item.className = 'autocomplete-item';
                 
-                // Dùng onpointerdown để phản hồi mượt trên cả cảm ứng và chuột, tránh lỗi mất focus
-                item.onpointerdown = function(e) {
-                    e.preventDefault(); // Tránh mất focus input ngay lập tức
+                // Đổi thành onclick để thiết bị di động phân biệt được giữa việc "vuốt" và "chọn"
+                item.onclick = function() {
                     document.getElementById(`name_${index}`).value = `[${doc.code}] ${doc.name}`;
                     document.getElementById(`price_${index}`).value = doc.price;
                     calcRowSubtotal(index);
