@@ -57,6 +57,28 @@
         .row-subtotal { font-weight: 700; color: #1E90FF; text-align: right; font-size: 15px; margin-top: 10px;}
         .row-subtotal span { color: #00509E; font-weight: 800; font-size: 16px;}
         
+        /* --- AUTOCOMPLETE DROPDOWN CHO MOBILE --- */
+        .autocomplete-wrapper { position: relative; width: 100%; }
+        .autocomplete-list {
+            position: absolute; top: calc(100% + 5px); left: 0; right: 0;
+            background: #ffffff; border: 2px solid #1E90FF; border-radius: 12px;
+            max-height: 250px; overflow-y: auto; z-index: 1000;
+            box-shadow: 0 8px 25px rgba(30,144,255,0.25);
+            display: none;
+        }
+        .autocomplete-item {
+            padding: 12px 15px; border-bottom: 1px solid #F0F8FF;
+            cursor: pointer; font-size: 14px; font-weight: 600; color: #4A4A4A;
+            line-height: 1.4; transition: 0.2s;
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover, .autocomplete-item:active { background: #F4FAFF; }
+        .ac-code { 
+            display: inline-block; background: #E6F5FF; color: #1E90FF; 
+            padding: 2px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; margin-bottom: 4px;
+        }
+        .ac-price { font-size: 13px; color: #32CD32; font-weight: 800; display: block; margin-top: 4px;}
+
         button { 
             width: 100%; padding: 16px; font-size: 18px; border-radius: 15px; border: none; 
             cursor: pointer; font-weight: 800; transition: all 0.2s ease; margin-top: 15px; 
@@ -307,7 +329,7 @@
 
 <script>
     // ================= DỮ LIỆU TÀI LIỆU =================
-    const documentDB = [
+    const rawDocumentDB = [
         { code: "VL01", name: "DẠY THÊM VẬT LÝ KHỐI 10 – THẦY TRẦN THI NHÂN", price: 180000 },
         { code: "VL02", name: "DẠY THÊM VẬT LÝ KHỐI 10 – CÔ NHUNG CUTE", price: 180000 },
         { code: "VL03", name: "DẠY THÊM VẬT LÝ KHỐI 10 – THẦY HOÀNG SƯ ĐIỂU", price: 180000 },
@@ -369,34 +391,16 @@
         { code: "VL22", name: "GIÁO ÁN TÍCH HỢP AI & NLS KHỐI 12 KẾT NỐI TRI THỨC", price: 220000 }
     ];
 
-    window.onload = function() {
-        const datalist = document.createElement('datalist');
-        datalist.id = 'docList';
-        
-        const uniqueDocs = new Set();
-        documentDB.forEach(doc => {
-            const val = `[${doc.code}] ${doc.name}`;
-            if (!uniqueDocs.has(val)) {
-                uniqueDocs.add(val);
-                const option = document.createElement('option');
-                option.value = val;
-                datalist.appendChild(option);
-            }
-        });
-        document.body.appendChild(datalist);
-    };
-
-    function autoFillPrice(index) {
-        const nameInput = document.getElementById(`name_${index}`).value;
-        const priceInput = document.getElementById(`price_${index}`);
-        
-        const matchedItem = documentDB.find(item => `[${item.code}] ${item.name}` === nameInput);
-        
-        if (matchedItem) {
-            priceInput.value = matchedItem.price;
-            calcRowSubtotal(index);
+    // Lọc trùng lặp để danh sách gọn gàng
+    const uniqueDocs = [];
+    const seenDocs = new Set();
+    rawDocumentDB.forEach(doc => {
+        const key = doc.code + "|" + doc.name;
+        if (!seenDocs.has(key)) {
+            seenDocs.add(key);
+            uniqueDocs.push(doc);
         }
-    }
+    });
 
     function generateInputFields() {
         const num = parseInt(document.getElementById('numItems').value);
@@ -408,7 +412,10 @@
                 <div class="product-row">
                     <h4>📝 Tài liệu số ${i}</h4>
                     <div class="input-group">
-                        <input type="text" id="name_${i}" list="docList" placeholder="Gõ mã (VD: VL04) hoặc tên tài liệu..." oninput="autoFillPrice(${i})">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="name_${i}" placeholder="Gõ mã (VD: VL04) hoặc tên..." autocomplete="off" oninput="handleSearch(${i})" onfocus="handleSearch(${i})">
+                            <div id="ac_list_${i}" class="autocomplete-list"></div>
+                        </div>
                         <select id="type_${i}" onchange="calcRowSubtotal(${i})">
                             <option value="tinh">Tính tiền</option>
                             <option value="tang">🎁 Tặng</option>
@@ -420,6 +427,54 @@
             `;
         }
     }
+
+    // Xử lý tìm kiếm tùy chỉnh
+    function handleSearch(index) {
+        const val = document.getElementById(`name_${index}`).value.toLowerCase().trim();
+        const listEl = document.getElementById(`ac_list_${index}`);
+        listEl.innerHTML = '';
+        
+        if (!val) {
+            listEl.style.display = 'none';
+            return;
+        }
+
+        const filtered = uniqueDocs.filter(doc => 
+            doc.code.toLowerCase().includes(val) || doc.name.toLowerCase().includes(val)
+        );
+
+        if (filtered.length > 0) {
+            filtered.forEach(doc => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                
+                // Dùng onpointerdown để phản hồi mượt trên cả cảm ứng và chuột, tránh lỗi mất focus
+                item.onpointerdown = function(e) {
+                    e.preventDefault(); // Tránh mất focus input ngay lập tức
+                    document.getElementById(`name_${index}`).value = `[${doc.code}] ${doc.name}`;
+                    document.getElementById(`price_${index}`).value = doc.price;
+                    calcRowSubtotal(index);
+                    listEl.style.display = 'none';
+                };
+
+                item.innerHTML = `
+                    <div><span class="ac-code">${doc.code}</span> ${doc.name}</div>
+                    <span class="ac-price">${doc.price.toLocaleString('vi-VN')} ₫</span>
+                `;
+                listEl.appendChild(item);
+            });
+            listEl.style.display = 'block';
+        } else {
+            listEl.style.display = 'none';
+        }
+    }
+
+    // Ẩn danh sách khi click ra ngoài
+    document.addEventListener('pointerdown', function(e) {
+        if (!e.target.closest('.autocomplete-wrapper')) {
+            document.querySelectorAll('.autocomplete-list').forEach(el => el.style.display = 'none');
+        }
+    });
 
     function toggleDiscountInput() {
         const hasDiscount = document.getElementById('hasDiscount').value;
