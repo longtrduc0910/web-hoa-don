@@ -117,7 +117,6 @@
             display: flex; margin-bottom: 8px; font-size: 15px; align-items: baseline; gap: 10px;
         }
         .customer-row:last-child { margin-bottom: 0; }
-        /* Đã xóa width cố định, dùng flex-shrink để nhãn không bị co và không đè chữ */
         .c-label { color: #5C9CE6; font-weight: 800; white-space: nowrap; flex-shrink: 0;}
         .c-value { 
             color: #4A4A4A; font-weight: 700; 
@@ -134,7 +133,7 @@
         .inv-table th { 
             color: #1E90FF; padding: 10px 15px; font-size: 14px; font-weight: 800; 
             background: #E6F5FF; border-radius: 12px; font-family: 'Baloo 2', cursive;
-            white-space: nowrap; /* BẮT BUỘC HEADER TRÊN 1 DÒNG */
+            white-space: nowrap; 
         }
         .inv-table td { 
             padding: 15px; background: #FAFAFA; color: #4A4A4A; font-weight: 600;
@@ -244,7 +243,6 @@
                 <div class="inv-brand-sub">Chuyên Tài Liệu Vật Lý THPT Chất Lượng</div>
             </div>
 
-            <!-- Đổi Icon sang hình thoi nghiêm túc hơn -->
             <div class="inv-title">🔹 HÓA ĐƠN THANH TOÁN 🔹</div>
             <div class="inv-meta-grid">
                 <div class="meta-badge" id="invIdDisplay">🆔 #TP-XXXX</div>
@@ -258,7 +256,6 @@
             <table class="inv-table">
                 <thead>
                     <tr>
-                        <!-- Loại bỏ emoji gây mất nghiêm túc ở header -->
                         <th class="text-left">Tên tài liệu</th>
                         <th class="text-right">Đơn giá</th>
                         <th class="text-right">Thành tiền</th>
@@ -309,6 +306,98 @@
 </div>
 
 <script>
+    // ================= DỮ LIỆU TÀI LIỆU =================
+    const documentDB = [
+        { code: "VL01", name: "DẠY THÊM VẬT LÝ KHỐI 10 – THẦY TRẦN THI NHÂN", price: 180000 },
+        { code: "VL02", name: "DẠY THÊM VẬT LÝ KHỐI 10 – CÔ NHUNG CUTE", price: 180000 },
+        { code: "VL03", name: "DẠY THÊM VẬT LÝ KHỐI 10 – THẦY HOÀNG SƯ ĐIỂU", price: 180000 },
+        { code: "VL04", name: "DẠY THÊM VẬT LÝ KHỐI 10 – WEBSITE TÀI LIỆU CHUẨN", price: 180000 },
+        { code: "VL05", name: "DẠY THÊM VẬT LÝ KHỐI 10 – WEBSITE THỦ KHOA ĐẠI HỌC", price: 180000 },
+        { code: "VL2706", name: "DẠY THÊM VẬT LÝ KHỐI 10 – WEBSITE TÀI LIỆU CHUẨN 2027", price: 220000 },
+        { code: "VL01", name: "DẠY THÊM VẬT LÝ KHỐI 11 – THẦY TRẦN THI NHÂN", price: 180000 },
+        { code: "VL02", name: "DẠY THÊM VẬT LÝ KHỐI 11 – CÔ NHUNG CUTE", price: 180000 },
+        { code: "VL03", name: "DẠY THÊM VẬT LÝ KHỐI 11 – THẦY HOÀNG SƯ ĐIỂU", price: 180000 },
+        { code: "VL04", name: "DẠY THÊM VẬT LÝ KHỐI 11 – WEBSITE TÀI LIỆU CHUẨN", price: 180000 },
+        { code: "VL05", name: "DẠY THÊM VẬT LÝ KHỐI 11 – WEBSITE THỦ KHOA ĐẠI HỌC", price: 180000 },
+        { code: "VL2706", name: "DẠY THÊM VẬT LÝ KHỐI 11 – WEBSITE TÀI LIỆU CHUẨN 2027", price: 220000 },
+        { code: "VL01", name: "DẠY THÊM VẬT LÝ KHỐI 12 – THẦY TRẦN THI NHÂN", price: 180000 },
+        { code: "VL02", name: "DẠY THÊM VẬT LÝ KHỐI 12 – CÔ NHUNG CUTE", price: 180000 },
+        { code: "VL03", name: "DẠY THÊM VẬT LÝ KHỐI 12 – THẦY HOÀNG SƯ ĐIỂU", price: 180000 },
+        { code: "VL04", name: "DẠY THÊM VẬT LÝ KHỐI 12 – WEBSITE TÀI LIỆU CHUẨN", price: 180000 },
+        { code: "VL06", name: "DẠY THÊM VẬT LÝ KHỐI 12 – THẦY VŨ ĐÔNG DƯƠNG", price: 180000 },
+        { code: "VL09", name: "DẠY THÊM VẬT LÝ KHỐI 12 – THÁI VĂN THÀNH", price: 230000 },
+        { code: "VL14", name: "DẠY THÊM & BÀI TẬP THỰC TẾ KHỐI 12 – THẦY CHU VĂN BIÊN", price: 250000 },
+        { code: "VL2702", name: "DẠY THÊM VẬT LÝ KHỐI 12 – THẦY TRẦN THI NHÂN 2027", price: 250000 },
+        { code: "VL2703", name: "NẮM TRỌN KIẾN THỨC VẬT LÝ 12 – THẦY ĐỖ NGỌC HÀ", price: 400000 },
+        { code: "VL2706", name: "DẠY THÊM VẬT LÝ KHỐI 12 – WEBSITE TÀI LIỆU CHUẨN 2027", price: 220000 },
+        { code: "CB01", name: "DẠY THÊM 3 KHỐI - THẦY TRẦN THI NHÂN", price: 400000 },
+        { code: "CB02", name: "DẠY THÊM 3 KHỐI - CÔ NHUNG CUTE", price: 400000 },
+        { code: "CB03", name: "DẠY THÊM 3 KHỐI - THẦY HOÀNG SƯ ĐIỂU", price: 400000 },
+        { code: "CB04", name: "DẠY THÊM 3 KHỐI - WEBSITE TÀI LIỆU CHUẨN", price: 400000 },
+        { code: "CB05", name: "DẠY THÊM KHỐI 10 , 11 - WEBSITE THỦ KHOA ĐẠI HỌC", price: 300000 },
+        { code: "CB07", name: "CHUYÊN LUYỆN LÝ THUYẾT & THỰC TẾ - THẦY VŨ NGỌC ANH", price: 330000 },
+        { code: "CB2706", name: "DẠY THÊM 3 KHỐI - WEBSITE TÀI LIỆU CHUẨN 2027", price: 600000 },
+        { code: "CB18", name: "120 ĐỀ THI ĐỊNH KỲ 3 KHỐI - WEBSITE TÀI LIỆU CHUẨN", price: 350000 },
+        { code: "CB15", name: "TRỌN BỘ POWER POINT (PPT) 3 KHỐI", price: 440000 },
+        { code: "CB22", name: "TRỌN BỘ GIÁO ÁN TÍCH HỢP AI & NĂNG LỰC SỐ 3 KHỐI", price: 560000 },
+        { code: "CB1522", name: "TRỌN BỘ POWER POINT & GIÁO ÁN TÍCH HỢP NLS 3 KHỐI", price: 880000 },
+        { code: "VL2705", name: "TÓM TẮT LÝ THUYẾT VẬT LÝ 3 KHỐI – TURING PHYSICS", price: 130000 },
+        { code: "VL07", name: "699 CÂU CHINH PHỤC TOÀN DIỆN LÝ THUYẾT – THẦY VŨ NGỌC ANH", price: 120000 },
+        { code: "VL07", name: "1000 CÂU CÀN QUÉT LÝ THUYẾT – THẦY VŨ NGỌC ANH", price: 120000 },
+        { code: "VL19", name: "BỘ ĐỀ LUYỆN 10 ĐIỂM LÝ THUYẾT VẬT LÝ", price: 200000 },
+        { code: "VL25", name: "600+ CÂU TRẮC NGHIỆM ĐÚNG SAI LÝ THUYẾT – WEBSITE TÀI LIỆU CHUẨN", price: 200000 },
+        { code: "VL26", name: "20 ĐỀ LUYỆN LÝ THUYẾT TNTHPTQG2026", price: 130000 },
+        { code: "VL27", name: "1000 CÂU TRẮC NGHIỆM LÝ THUYẾT", price: 130000 },
+        { code: "VL07", name: "100 MÔ HÌNH THỰC TẾ NÂNG CAO – THẦY VŨ NGỌC ANH", price: 130000 },
+        { code: "VL08", name: "200 CÂU HỎI THỰC TẾ & THÍ NGHIỆM – THẦY VŨ ĐÔNG DƯƠNG", price: 70000 },
+        { code: "VL14", name: "BÀI TẬP THỰC TẾ THEO CHƯƠNG – THẦY CHU VĂN BIÊN", price: 150000 },
+        { code: "VL19", name: "BỘ CÂU HỎI MÔ HÌNH THỰC TẾ NÂNG CAO – WEBSITE THỦ KHOA ĐẠI HỌC", price: 200000 },
+        { code: "VL07", name: "30 NGÀY TỔNG ÔN CẤP TỐC VẬT LÝ – THẦY VŨ NGỌC ANH", price: 110000 },
+        { code: "VL16", name: "BỘ ĐỀ TRƯỜNG SỞ 2026 – WEBSITE TÀI LIỆU CHUẨN", price: 250000 },
+        { code: "VL17", name: "BỘ 40 ĐỀ LUYỆN THI NÂNG CAO MỨC ĐỘ 9 ĐIỂM – WEBSITE TÀI LIỆU CHUẨN", price: 250000 },
+        { code: "VL19", name: "BỘ 60+ ĐỀ KHẢO SÁT CHẤT LƯỢNG VẬT LÝ 12 – WEBSITE THỦ KHOA ĐẠI HỌC", price: 250000 },
+        { code: "VL20", name: "250 ĐỀ TRƯỜNG SỞ 2026 – WEBSITE THỦ KHOA ĐẠI HỌC", price: 250000 },
+        { code: "VL21", name: "25 ĐỀ THI THỬ CHUẨN FORM THPTQG2026 – THẦY HOÀNG SƯ ĐIỂU", price: 190000 },
+        { code: "VL22", name: "BỘ 54 ĐỀ TỔNG ÔN THỰC CHIẾN CHUẨN CẤU TRÚC – THÁI VĂN THÀNH", price: 200000 },
+        { code: "VL23", name: "ĐỀ THI THỬ CHUẨN CẤU TRÚC 2026 – THÁI VĂN THÀNH", price: 250000 },
+        { code: "VL24", name: "10 ĐỀ CƠ BẢN VỀ ĐÍCH", price: 112000 },
+        { code: "VL15", name: "POWER POINT (PPT) VẬT LÝ 10 KẾT NỐI TRI THỨC", price: 230000 },
+        { code: "VL15", name: "POWER POINT (PPT) VẬT LÝ 11 KẾT NỐI TRI THỨC", price: 230000 },
+        { code: "VL15", name: "POWER POINT (PPT) VẬT LÝ 12 KẾT NỐI TRI THỨC", price: 230000 },
+        { code: "VL22", name: "GIÁO ÁN TÍCH HỢP AI & NLS KHỐI 10 KẾT NỐI TRI THỨC", price: 220000 },
+        { code: "VL22", name: "GIÁO ÁN TÍCH HỢP AI & NLS KHỐI 11 KẾT NỐI TRI THỨC", price: 220000 },
+        { code: "VL22", name: "GIÁO ÁN TÍCH HỢP AI & NLS KHỐI 12 KẾT NỐI TRI THỨC", price: 220000 }
+    ];
+
+    window.onload = function() {
+        const datalist = document.createElement('datalist');
+        datalist.id = 'docList';
+        
+        const uniqueDocs = new Set();
+        documentDB.forEach(doc => {
+            const val = `[${doc.code}] ${doc.name}`;
+            if (!uniqueDocs.has(val)) {
+                uniqueDocs.add(val);
+                const option = document.createElement('option');
+                option.value = val;
+                datalist.appendChild(option);
+            }
+        });
+        document.body.appendChild(datalist);
+    };
+
+    function autoFillPrice(index) {
+        const nameInput = document.getElementById(`name_${index}`).value;
+        const priceInput = document.getElementById(`price_${index}`);
+        
+        const matchedItem = documentDB.find(item => `[${item.code}] ${item.name}` === nameInput);
+        
+        if (matchedItem) {
+            priceInput.value = matchedItem.price;
+            calcRowSubtotal(index);
+        }
+    }
+
     function generateInputFields() {
         const num = parseInt(document.getElementById('numItems').value);
         const container = document.getElementById('dynamic-inputs');
@@ -319,7 +408,7 @@
                 <div class="product-row">
                     <h4>📝 Tài liệu số ${i}</h4>
                     <div class="input-group">
-                        <input type="text" id="name_${i}" placeholder="Tên tài liệu...">
+                        <input type="text" id="name_${i}" list="docList" placeholder="Gõ mã (VD: VL04) hoặc tên tài liệu..." oninput="autoFillPrice(${i})">
                         <select id="type_${i}" onchange="calcRowSubtotal(${i})">
                             <option value="tinh">Tính tiền</option>
                             <option value="tang">🎁 Tặng</option>
